@@ -1,12 +1,12 @@
-FROM wordpress:apache
+FROM wordpress:5.3-apache
 
-LABEL com.lullabies.vendor="Lullabies"
-LABEL com.lullabies.version="3.0"
-LABEL com.lullabies.description="Base image containing Apache 2.4, PHP 7.2, MySQL Client, cURL, Pwgen 2.08, WP CLI and Nano editor"
+LABEL com.lullabies.vendor="Weef Interativa"
+LABEL com.lullabies.version="1.0"
+LABEL com.lullabies.description="Base image containing Apache 2.4, PHP 7.3, MySQL Client, cURL, Pwgen 2.08, WP CLI and Nano editor"
 
 ENV WEB_ROOT_DIR="/var/www/html"
 ENV WORDPRESS_LANG="pt_BR"
-ENV MUST_WAIT_DB=10
+ENV MUST_WAIT_DB=15
 ENV WORDPRESS_ENV="dev"
 
 COPY ./docker-entrypoint/docker-entrypoint.sh /start
@@ -22,7 +22,7 @@ COPY ./docker-entrypoint/php/php-dev.ini /tmp/php-dev.ini
 COPY ./docker-entrypoint/debian/pwgen_2.08-1_amd64.deb /tmp/pwgen.deb
 
 RUN apt-get update -y && apt-get install -y \
-    mysql-client \
+    mariadb-client \
     curl \
     nano && \
     docker-php-ext-install pdo pdo_mysql && \
