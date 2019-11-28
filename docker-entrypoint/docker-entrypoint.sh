@@ -3,6 +3,7 @@
 RED='\033[0;31m'
 NC='\033[0m'
 YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
 
 cd "${WEB_ROOT_DIR}" || exit
 
@@ -19,10 +20,15 @@ run_web_server() {
     if [ "${WORDPRESS_ENV}" = "dev" ]; then
         echo ">> Dev mode started, using php.ini for development optimization"
         cp /tmp/php-dev.ini /usr/local/etc/php/php.ini
-        echo ">> Starting Apache web server"
-    else
-        echo ">> Starting Apache web server"
     fi
+
+    echo ">> Starting Apache web server"
+    echo "${GREEN}+-------------------------+
+          |                         |
+          |    APACHE IS RUNNING    |
+          |        HAVE FUN !       |
+          |                         |
+          +-------------------------+${NC}"
 
     apache2-foreground
 }
@@ -142,24 +148,24 @@ additional_flags() {
 }
 
 fix_permissions() {
-    echo ">>> Setting permissions for files and folders"
-    chown www-data:www-data  -R .
+    if [${WORDPRESS_FIX_PERMS} = TRUE ]; then
+        echo ">>> Setting permissions for files and folders"
+        chown www-data:www-data  -R .
 
-    if [ "${WORDPRESS_ENV}" = "dev" ]; then
-        echo -e ">> Dev mode started, the group will have ${YELLOW}-rw-rwxr--${NC} permissions for files and ${YELLOW}-rwxrwxr-x${NC} for folders"
-        echo -e ">> To edit this files, you must run ${YELLOW}chown \$USER:www-data -R .${NC} on the root directory on host"
-        chgrp -R www-data ${WEB_ROOT_DIR}
-        find ${WEB_ROOT_DIR} -type d -exec chmod g+rwx {} +
-        find ${WEB_ROOT_DIR} -type f -exec chmod g+rwx {} +
-        find ${WEB_ROOT_DIR} -type d -exec chmod u+rwx {} +
-        find ${WEB_ROOT_DIR} -type f -exec chmod u+rwx {} +
-        find ${WEB_ROOT_DIR} -type d -exec chmod g+s {} +
-    else
-        echo -e ">> Prod mode started, the group will have ${YELLOW}-rw-r--r--${NC} permissions for files and ${YELLOW}-rwxr-xr-x${NC} for folders"
-        find . -type d -exec chmod 755 {} \;
-        find . -type f -exec chmod 644 {} \;
+        if [ "${WORDPRESS_ENV}" = "dev" ]; then
+            echo -e ">> Dev mode started, the user www-data (33) and group www-data(33) will have all permissions and ownerships."
+            chgrp -R www-data ${WEB_ROOT_DIR}
+            echo -e ">> Modifying permissions to Group can Read/Write/Execute on all directories"
+            find ${WEB_ROOT_DIR} -type d -exec chmod g+rwx {} +
+            echo -e ">> Modifying permissions to Group can Read/Write/Execute on all files"
+            find ${WEB_ROOT_DIR} -type f -exec chmod g+rwx {} +
+        else
+            echo -e ">> Prod mode started, the group will have ${YELLOW}-rw-r--r--${NC} permissions for files and ${YELLOW}-rwxr-xr-x${NC} for folders"
+            find . -type d -exec chmod 755 {} \;
+            find . -type f -exec chmod 644 {} \;
+        fi;
+        echo ">>> Done setting permissions for files and folders"
     fi;
-    echo ">>> Done setting permissions for files and folders"
 }
 
 import_wordpress() {
