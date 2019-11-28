@@ -148,8 +148,10 @@ additional_flags() {
 }
 
 fix_permissions() {
-    if [${WORDPRESS_FIX_PERMS} = TRUE ]; then
-        echo ">>> Setting permissions for files and folders"
+    if [[ -z ${WORDPRESS_FIX_PERMS} ]]; then
+       echo -e "Skipping permissions block"
+    else
+       echo ">>> Setting permissions for files and folders"
         chown www-data:www-data  -R .
 
         if [ "${WORDPRESS_ENV}" = "dev" ]; then
