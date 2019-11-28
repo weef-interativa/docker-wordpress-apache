@@ -1,4 +1,4 @@
-# Wordpress with Apache and PHP 7.2 in Docker
+# Wordpress with Apache and PHP 7.3 in Docker
 
 This project brings another but functionally Docker orchestration for developers mostly to setup an new or a existing
 Wordpress installation without headache.
@@ -54,7 +54,9 @@ http://localhost for example), and adding other specific flags in wp-config.php 
   * **Required**: Set the user database password;
 * _WORDPRESS_EXTRA_FLAGS_FILE_
   * **Optional**: Set the path of the file containing extras flags to be written in wp-config.php. See 
-[writing extra flags](TODO) section to configure the file correctly.
+[writing extra flags](TODO) section to configure the file correctly;
+* _WORDPRESS_FIX_PERMS_
+  * **Optional**: Set this variable to allow the init script to change de permissions of all directories and files. Do not set this variable in OS X or Windows (useful only in Linux).
 
 ### Variables needed in a new installation of Wordpress
 
